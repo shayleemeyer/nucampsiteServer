@@ -1,35 +1,36 @@
-const express = require("express");
+const express = require('express');
+const Promotion = require('../models/promotion');
+const authenticate = require('../authenticate');
+const cors = require('./cors');
 
-const Promotion =require('../models/promotions')
 const promotionRouter = express.Router();
 
-
-promotionRouter
-  .route("/")
-  .get((req, res, next) => {
+promotionRouter.route('/')
+.options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
+.get(cors.cors, (req, res, next) => {
     Promotion.find()
     .then(promotions => {
-      res.statusCode =200;
-      res.setHeader('Content-Type', 'application/json');
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
         res.json(promotions);
     })
     .catch(err => next(err));
 })
-.post((req, res, next) => {
-  Promotion.create(req.body)
-  .then(promotion => {
-      console.log('Promotion Created ', promotion);
-      res.statusCode = 200;
-      res.setHeader('Content-Type', 'application/json');
-      res.json(campsite);
-  })
-  .catch(err => next(err));
+.post(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
+    Promotion.create(req.body)
+    .then(promotion => {
+        console.log('Promotion Created ', promotion);
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.json(promotion);
+    })
+    .catch(err => next(err));
 })
-  .put((req, res) => {
+.put(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res) => {
     res.statusCode = 403;
-    res.end("PUT operation not supported on /campsites");
-  })
-  .delete((req, res, next) => {
+    res.end('PUT operation not supported on /campsites');
+})
+.delete(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     Promotion.deleteMany()
     .then(response => {
         res.statusCode = 200;
@@ -39,10 +40,9 @@ promotionRouter
     .catch(err => next(err));
 });
 
-
-promotionRouter
-  .route("/:promotionId")
-  .get((req, res, next) => {
+promotionRouter.route('/promotions/:promotionId')
+.options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
+.get(cors.cors, (req, res, next) => {
     Promotion.findById(req.params.promotionId)
     .then(promotion => {
         res.statusCode = 200;
@@ -51,12 +51,12 @@ promotionRouter
     })
     .catch(err => next(err));
 })
-.post((req, res) => {
+.post(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res) => {
     res.statusCode = 403;
-    res.end(`POST operation not supported on /campsites/${req.params.promotionId}`);
+    res.end(`POST operation not supported on /promotions/${req.params.campsiteId}`);
 })
-.put((req, res, next) => {
-    Promotion.findByIdAndUpdate(req.params.promotionId, {
+.put(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
+    Promotion.findByIdAndUpdate(req.user.admin, {
         $set: req.body
     }, { new: true })
     .then(promotion => {
@@ -66,7 +66,7 @@ promotionRouter
     })
     .catch(err => next(err));
 })
-.delete((req, res, next) => {
+.delete(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     Promotion.findByIdAndDelete(req.params.promotionId)
     .then(response => {
         res.statusCode = 200;

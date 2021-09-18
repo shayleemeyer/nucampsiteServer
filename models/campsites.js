@@ -49,7 +49,6 @@ const campsiteSchema = new Schema({
         type: Boolean,
         default: false
     },
- 
     comments: [commentSchema]
 }, {
     timestamps: true

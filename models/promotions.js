@@ -6,7 +6,8 @@ const Currency = mongoose.Types.Currency;
 const promotionSchema = new Schema({
     name: {
         type: String,
-        required: true
+        required: true,
+        unique: true,
     },
     image: {
         type: String,
@@ -14,7 +15,7 @@ const promotionSchema = new Schema({
     },
     featured: {
         type: Boolean,
-        required: false
+        default: false
     },
     cost: {
         type: Currency,
@@ -22,13 +23,14 @@ const promotionSchema = new Schema({
         min: 0
     },
     description: {
-        type: String,
+        type: String, 
         required: true
     }
-}, {
+}, 
+{
     timestamps: true
 });
-
+        
 const Promotion = mongoose.model('Promotion', promotionSchema);
 
 module.exports = Promotion;

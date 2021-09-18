@@ -1,12 +1,11 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-require('mongoose-currency').loadType(mongoose);
-const Currency = mongoose.Types.Currency;
 
 const partnerSchema = new Schema({
     name: {
         type: String,
-        required: true
+        required: true,
+        unique: true,
     },
     image: {
         type: String,
@@ -14,16 +13,18 @@ const partnerSchema = new Schema({
     },
     featured: {
         type: Boolean,
-        required: false
-    },
+        default: false,
+    },    
     description: {
-        type: String,
+        type: String, 
         required: true
     }
-}, {
+    
+}, 
+{
     timestamps: true
 });
-
+        
 const Partner = mongoose.model('Partner', partnerSchema);
 
 module.exports = Partner;
