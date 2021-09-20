@@ -28,7 +28,7 @@ promotionRouter.route('/')
 })
 .put(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res) => {
     res.statusCode = 403;
-    res.end('PUT operation not supported on /campsites');
+    res.end('PUT operation not supported on /promotions');
 })
 .delete(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     Promotion.deleteMany()
@@ -40,7 +40,7 @@ promotionRouter.route('/')
     .catch(err => next(err));
 });
 
-promotionRouter.route('/promotions/:promotionId')
+promotionRouter.route('/:promotionId')
 .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
 .get(cors.cors, (req, res, next) => {
     Promotion.findById(req.params.promotionId)
@@ -51,12 +51,12 @@ promotionRouter.route('/promotions/:promotionId')
     })
     .catch(err => next(err));
 })
-.post(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res) => {
+.post(cors.corsWithOptions, authenticate.verifyUser, (req, res) => {
     res.statusCode = 403;
-    res.end(`POST operation not supported on /promotions/${req.params.campsiteId}`);
+    res.end(`POST operation not supported on /promotions/${req.params.promotionId}`);
 })
 .put(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
-    Promotion.findByIdAndUpdate(req.user.admin, {
+    Promotion.findByIdAndUpdate(req.params.promotionId, {
         $set: req.body
     }, { new: true })
     .then(promotion => {

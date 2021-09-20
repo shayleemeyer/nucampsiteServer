@@ -40,7 +40,7 @@ partnerRouter.route('/')
     .catch(err => next(err));
 });
 
-partnerRouter.route('/partners/:partnerId')
+partnerRouter.route('/:partnerId')
 .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
 .get(cors.cors, (req, res, next) => {
     Partner.findById(req.params.partnerId)
@@ -51,9 +51,9 @@ partnerRouter.route('/partners/:partnerId')
     })
     .catch(err => next(err));
 })
-.post(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res) => {
+.post(cors.corsWithOptions, authenticate.verifyUser, (req, res) => {
     res.statusCode = 403;
-    res.end(`POST operation not supported on /partners/${req.params.campsiteId}`);
+    res.end(`POST operation not supported on /partners/${req.params.partnerId}`);
 })
 .put(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     Partner.findByIdAndUpdate(req.params.partnerId, {
